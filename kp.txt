@@ -1,0 +1,22 @@
+A Given city is divided in the Suburbs,town, corporation where corporation is the smallest unit.
+
+Find whether two corporation shares common town ,  Suburbs, City
+
+
+
+Example:
+City: Bangalore: 
+
+Suburbs: Bangalore East, Bangalore West
+
+Town: Bangalore East - > A, B, Bangalore West-> C, D
+
+Corporations: A-> 56001, 56002 B-> 56003, 56004 , C-> 56005, 56006, d-> 56007, 56008
+
+I/P:		 O/P
+
+56001, 56008 -> Bangalore
+
+56001, 56002 -> A, Bangalore East, Bangalore
+
+56008, 56005 -> Bangalore West, Bangalore
