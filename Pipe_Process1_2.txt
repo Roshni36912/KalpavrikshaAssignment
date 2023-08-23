@@ -1,0 +1,91 @@
+IPC mechanism for Pipe implementation
+---------------------------------------------------------------
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+#define MAX_NUMBERS 100
+
+void selectionSort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        int minIndex = i;
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
+            }
+        }
+        if (minIndex != i) {
+            // Swap arr[i] and arr[minIndex]
+            int temp = arr[i];
+            arr[i] = arr[minIndex];
+            arr[minIndex] = temp;
+        }
+    }
+}
+
+int main() {
+    int fd[2]; // Pipe file descriptors
+    if (pipe(fd) == -1) {
+        perror("Pipe creation failed");
+        return 1;
+    }
+
+    int numbers[MAX_NUMBERS];
+    int numCount;
+
+    pid_t pid = fork();
+    if (pid == -1) {
+        perror("Fork failed");
+        return 1;
+    }
+
+    if (pid == 0) {
+        // Child process (Process 2)
+        close(fd[1]); // Close the write end of the pipe in child process
+        read(fd[0], &numCount, sizeof(int));
+        read(fd[0], numbers, numCount * sizeof(int));
+        close(fd[0]);
+
+        selectionSort(numbers, numCount);
+
+        close(fd[0]); // Reopen for writing
+        write(fd[1], &numCount, sizeof(int));
+        write(fd[1], numbers, numCount * sizeof(int));
+        close(fd[1]);
+
+        exit(0);
+    } 
+   else {
+        // Parent process i.e Process 1
+        close(fd[0]); // Close the read end of the pipe in parent process
+
+        printf("Enter the number of elements: ");
+        scanf("%d", &numCount);
+        printf("Enter %d elements:\n", numCount);
+        for (int i = 0; i < numCount; i++) {
+            scanf("%d", &numbers[i]);
+        }
+
+        write(fd[1], &numCount, sizeof(int));
+        write(fd[1], numbers, numCount * sizeof(int));
+        close(fd[1]);
+
+        wait(NULL); // Wait for the child process to finish
+
+        read(fd[0], &numCount, sizeof(int));
+        read(fd[0], numbers, numCount * sizeof(int));
+        close(fd[0]);
+
+        printf("Sorted numbers: ");
+        for (int i = 0; i < numCount; i++) {
+            printf("%d ", numbers[i]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
+
+----------------------------------------------------------------------------

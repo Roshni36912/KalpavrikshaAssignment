@@ -1,0 +1,13 @@
+process 1 - process 1 is responsible for sorting a series of numbers. Its input is unsorted series ans it then sorts it 
+process 2 - reads the series of numbers from a keyboard, stores it in the array. 
+            It however depends on process 2 to perform sorting, hence it sends the sequence that is read to process 2 using 2 using an IPC mechanism. 
+            Once the process 2 has sorted the data, process 1 reads it back and displays the sorted data to the user.
+
+IPC mechanisms needs to be implemented are as follows:
+1. File
+2. Pipe 
+3. Shared memory 
+4. Message Queue
+5. Sockets
+
+------------------------------------
